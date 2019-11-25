@@ -6,13 +6,6 @@ int yylex();
 int yyerror(const char *s);
 %}
 
-%right '='
-%left '+' '-'
-%left '*' '/'
-%left MINUS
-%right '^'
-/* %nonassoc '^' */
-
 %union {
     double val;
     struct symrec *tptr;
@@ -21,6 +14,16 @@ int yyerror(const char *s);
 %token  <val>           NUM
 %token  <tptr>          VAR FNCT
 %type   <val>           expr
+%token  <val>           EQUAL "=="
+
+%right EQUAL
+%right '='
+%left '+' '-'
+%left '*' '/'
+%left MINUS
+%right '^'
+/* %nonassoc '^' */
+
 %%
 
 input:                          /* empty */
@@ -48,6 +51,7 @@ expr:           NUM { $$ = $1; printf("NUM: (%lf)\n", $1); }
                     printf("call function %s(%lf)\n", $1->name, $3);
                     $$ = $1->value.fnctptr($3);
                 }
+        |       expr EQUAL expr { if ($1 == $3) { $$ = 1; } else { $$ = 0; } }
         |       expr '+' expr { $$ = $1 + $3; printf("(%lf+%lf=%lf)\n", $1, $3, $$); }
         |       expr '-' expr { $$ = $1 - $3; printf("(%lf-%lf=%lf)\n", $1, $3, $$); }
         |       expr '*' expr { $$ = $1 * $3; printf("(*)\n"); }

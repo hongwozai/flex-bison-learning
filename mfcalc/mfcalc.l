@@ -26,6 +26,8 @@
  return NUM;
  }
 
+"==" return EQUAL;
+
     /* skip */
 [ \t]+ yylloc.last_column+=yyleng; yylloc.first_column+=yyleng;
 
